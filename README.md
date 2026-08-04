@@ -6,7 +6,7 @@ A free Windows tool that detects and fixes the **duplicate/held-frame stutter** 
 
 ## The Problem
 
-Seedance 2.0 outputs often have held/duplicate frames baked in — commonly every 3rd or 4th frame — causing visible stutter and jump when scrubbing, especially in fast-action shots. This is a known, community-reported issue:
+Seedance 2.0 outputs often have held/duplicate frames baked in — commonly every 3rd or 4th frame — causing visible stutter and jump when scrubbing, especially in fast-action shots.
 
 
 ---
