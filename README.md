@@ -2,6 +2,10 @@
 
 A free Windows tool that detects and fixes the **duplicate/held-frame stutter** baked into Seedance 2.0 generated clips.
 
+🌐 **Website:** https://farhadzamanivfx-ui.github.io/seedance-frame-doctor/  ·  ⬇ **[Download SeedanceFrameDoctor.exe](https://github.com/farhadzamanivfx-ui/seedance-frame-doctor/releases/latest/download/SeedanceFrameDoctor.exe)**
+
+![Seedance Frame Doctor](docs/screenshot.png)
+
 ---
 
 ## The Problem
@@ -116,6 +120,7 @@ gui_app.py           # Tkinter desktop GUI
 setup_and_build.bat  # One-button build script (only needs Python)
 build_exe.bat        # Rebuild-only script (if venv already exists)
 vendor/              # Pre-downloaded RIFE wheel + model weights
+docs/                # Project website (GitHub Pages)
 ```
 
 ---

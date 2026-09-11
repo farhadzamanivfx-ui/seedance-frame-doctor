@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Seedance Frame Doctor</title>
+<meta name="description" content="Free Windows tool that detects and fixes the duplicate / held-frame stutter baked into Seedance 2.0 clips, with RIFE AI interpolation.">
+<meta property="og:title" content="Seedance Frame Doctor">
+<meta property="og:description" content="Detect and fix the held-frame stutter in Seedance 2.0 clips. Free, one .exe, RIFE AI interpolation.">
+<meta property="og:image" content="https://farhadzamanivfx-ui.github.io/seedance-frame-doctor/screenshot.png">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎞️</text></svg>">
+<style>
+  :root {
+    --bg: #0d0f12;
+    --panel: #151920;
+    --line: #262c36;
+    --text: #e8eaee;
+    --muted: #9aa3b2;
+    --accent: #ffb547;
+    --bad: #ff5d5d;
+    --good: #43d69a;
+    --mono: ui-monospace, "Cascadia Code", Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  a { color: var(--accent); }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 24px; }
+
+  header.hero { padding: 88px 0 56px; border-bottom: 1px solid var(--line);
+    background: radial-gradient(ellipse at 70% 0%, #2a1f0c 0%, transparent 60%); }
+  .tag { font: 600 12px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+  h1 { font-size: clamp(36px, 6vw, 60px); line-height: 1.05; margin: 14px 0 18px; letter-spacing: -.02em; }
+  .lede { font-size: 20px; color: var(--muted); max-width: 640px; margin: 0 0 32px; }
+  .cta { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+  .btn { display: inline-flex; align-items: center; gap: 10px; padding: 14px 22px; border-radius: 10px;
+    font-weight: 600; text-decoration: none; border: 1px solid var(--line); color: var(--text); }
+  .btn.primary { background: var(--accent); color: #1a1204; border-color: var(--accent); }
+  .btn:hover { filter: brightness(1.08); }
+  .fine { font-size: 13px; color: var(--muted); margin-top: 14px; }
+
+  section { padding: 64px 0; border-bottom: 1px solid var(--line); }
+  h2 { font-size: 28px; margin: 0 0 8px; letter-spacing: -.01em; }
+  .sub { color: var(--muted); margin: 0 0 32px; max-width: 680px; }
+
+  /* before / after playback */
+  .demo { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .clip { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 18px; }
+  .clip h3 { margin: 0 0 12px; font-size: 14px; font-family: var(--mono); display: flex; justify-content: space-between; }
+  .clip h3 .bad { color: var(--bad); } .clip h3 .good { color: var(--good); }
+  .track { position: relative; height: 64px; border-radius: 8px; background: #0a0c0f; overflow: hidden; }
+  .ball { position: absolute; top: 16px; left: 0; width: 32px; height: 32px; border-radius: 50%;
+    background: var(--accent); box-shadow: 0 0 18px #ffb54766; }
+  /* 24 frames per loop. "before" holds every 4th frame (frames 4, 8, 12... repeat the previous pose),
+     "after" advances every frame. */
+  .before .ball { animation: stutter 2s steps(1, end) infinite; }
+  .after  .ball { animation: smooth 2s steps(24, end) infinite; }
+  @keyframes smooth { from { left: 0; } to { left: calc(100% - 32px); } }
+  @keyframes stutter {
+    0%    { left: calc((100% - 32px) * 0/24); }  4.17% { left: calc((100% - 32px) * 1/24); }
+    8.33% { left: calc((100% - 32px) * 2/24); }  12.5% { left: calc((100% - 32px) * 3/24); }
+    16.67%{ left: calc((100% - 32px) * 3/24); }  20.83%{ left: calc((100% - 32px) * 5/24); }
+    25%   { left: calc((100% - 32px) * 6/24); }  29.17%{ left: calc((100% - 32px) * 7/24); }
+    33.33%{ left: calc((100% - 32px) * 7/24); }  37.5% { left: calc((100% - 32px) * 9/24); }
+    41.67%{ left: calc((100% - 32px) * 10/24); } 45.83%{ left: calc((100% - 32px) * 11/24); }
+    50%   { left: calc((100% - 32px) * 11/24); } 54.17%{ left: calc((100% - 32px) * 13/24); }
+    58.33%{ left: calc((100% - 32px) * 14/24); } 62.5% { left: calc((100% - 32px) * 15/24); }
+    66.67%{ left: calc((100% - 32px) * 15/24); } 70.83%{ left: calc((100% - 32px) * 17/24); }
+    75%   { left: calc((100% - 32px) * 18/24); } 79.17%{ left: calc((100% - 32px) * 19/24); }
+    83.33%{ left: calc((100% - 32px) * 19/24); } 87.5% { left: calc((100% - 32px) * 21/24); }
+    91.67%{ left: calc((100% - 32px) * 22/24); } 95.83%{ left: calc((100% - 32px) * 23/24); }
+    100%  { left: calc((100% - 32px) * 23/24); }
+  }
+  .strip { display: grid; grid-template-columns: repeat(12, 1fr); gap: 4px; margin-top: 12px; }
+  .f { height: 30px; border-radius: 4px; background: #222833; font: 10px/30px var(--mono);
+    text-align: center; color: var(--muted); }
+  .f.held { background: #3a1616; color: var(--bad); outline: 1px solid var(--bad); }
+  .f.new  { background: #0f3326; color: var(--good); outline: 1px solid var(--good); }
+  .legend { font-size: 13px; color: var(--muted); margin-top: 10px; }
+  @media (prefers-reduced-motion: reduce) { .ball { animation: none !important; } }
+
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; counter-reset: s; }
+  .step { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 22px; }
+  .step::before { counter-increment: s; content: "0" counter(s); font: 600 13px var(--mono); color: var(--accent); }
+  .step h3 { margin: 8px 0 6px; font-size: 18px; }
+  .step p { margin: 0; color: var(--muted); font-size: 15px; }
+
+  .shot { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--panel);
+    max-width: 780px; margin: 0 auto; }
+  .shot img { display: block; width: 100%; height: auto; }
+
+  .tablewrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: .06em; }
+  td code { font-family: var(--mono); color: var(--accent); }
+  .pill { font: 600 11px var(--mono); padding: 2px 8px; border-radius: 99px; background: #0f3326; color: var(--good); }
+
+  pre { background: #0a0c0f; border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px;
+    overflow-x: auto; font: 14px/1.6 var(--mono); color: #cfd5df; margin: 0 0 14px; }
+  pre .c { color: #6b7485; }
+
+  footer { padding: 40px 0 56px; color: var(--muted); font-size: 14px; }
+  footer .author { color: var(--text); font-weight: 600; }
+
+  @media (max-width: 760px) {
+    .demo, .steps { grid-template-columns: 1fr; }
+    header.hero { padding-top: 56px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="tag">Free · Windows · v1.0</div>
+    <h1>Seedance Frame Doctor</h1>
+    <p class="lede">Detects and fixes the duplicate / held-frame stutter baked into Seedance&nbsp;2.0 clips, and rebuilds the missing motion with RIFE AI interpolation.</p>
+    <div class="cta">
+      <a class="btn primary" href="https://github.com/farhadzamanivfx-ui/seedance-frame-doctor/releases/latest/download/SeedanceFrameDoctor.exe">⬇ Download for Windows</a>
+      <a class="btn" href="https://github.com/farhadzamanivfx-ui/seedance-frame-doctor">View source on GitHub</a>
+    </div>
+    <p class="fine">Single .exe (~188 MB) with ffmpeg and the RIFE model bundled inside. Nothing else to install.</p>
+  </div>
+</header>
+
+<section id="problem">
+  <div class="wrap">
+    <h2>The problem</h2>
+    <p class="sub">Seedance 2.0 often repeats a frame (commonly every 3rd or 4th) inside the render. You see it as a hitch in fast motion and a jump when you scrub. This tool finds those exact frames and replaces them with real in-betweens, keeping the original frame count and timing.</p>
+    <div class="demo">
+      <div class="clip before">
+        <h3><span>SEEDANCE OUTPUT</span><span class="bad">held every 4th frame</span></h3>
+        <div class="track"><div class="ball"></div></div>
+        <div class="strip">
+          <div class="f">1</div><div class="f">2</div><div class="f">3</div><div class="f held">3</div>
+          <div class="f">5</div><div class="f">6</div><div class="f">7</div><div class="f held">7</div>
+          <div class="f">9</div><div class="f">10</div><div class="f">11</div><div class="f held">11</div>
+        </div>
+      </div>
+      <div class="clip after">
+        <h3><span>AFTER FRAME DOCTOR</span><span class="good">every frame moves</span></h3>
+        <div class="track"><div class="ball"></div></div>
+        <div class="strip">
+          <div class="f">1</div><div class="f">2</div><div class="f">3</div><div class="f new">4</div>
+          <div class="f">5</div><div class="f">6</div><div class="f">7</div><div class="f new">8</div>
+          <div class="f">9</div><div class="f">10</div><div class="f">11</div><div class="f new">12</div>
+        </div>
+      </div>
+    </div>
+    <p class="legend">Red: a held frame that repeats the previous pose. Green: an interpolated frame generated in its place.</p>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap">
+    <h2>How it works</h2>
+    <p class="sub">Two buttons: Analyze, then Fix. Fix removes exactly the frames that Analyze flagged, with the same threshold.</p>
+    <div class="steps">
+      <div class="step">
+        <h3>Snap-aware detection</h3>
+        <p>Each frame is compared with the one before it. A frame counts as held only if it is nearly identical <em>and</em> the next frame snaps back to real motion, so real slow motion or a locked-off tail is not flagged.</p>
+      </div>
+      <div class="step">
+        <h3>Exact removal</h3>
+        <p>The report tells you how many frames are held and the pattern (e.g. "every 4th frame"). Those frames, and only those, are dropped with ffmpeg's <code>select</code> filter.</p>
+      </div>
+      <div class="step">
+        <h3>Per-gap interpolation</h3>
+        <p>Each gap gets one new frame at its exact time position. The output keeps the source fps and frame count, as ProRes 422 HQ for comp or H.264/H.265 for review.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="app">
+  <div class="wrap">
+    <h2>The app</h2>
+    <p class="sub">Pick a clip, click Analyze to see the report, then click Fix.</p>
+    <div class="shot"><img src="screenshot.png" alt="Seedance Frame Doctor window: input and output paths, threshold, codec and interpolation settings, Analyze and Fix buttons, and a log panel" loading="lazy"></div>
+  </div>
+</section>
+
+<section id="modes">
+  <div class="wrap">
+    <h2>Interpolation engines</h2>
+    <p class="sub">Pick the one that suits the shot.</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Mode</th><th>What it does</th><th>When to use</th></tr></thead>
+        <tbody>
+          <tr><td><code>blend</code></td><td>ffmpeg cross-blend of the two real frames on either side</td><td>Safest. No structural artifacts, slight ghosting in fast motion</td></tr>
+          <tr><td><code>mci</code></td><td>ffmpeg motion-compensated interpolation</td><td>Sharper, but can tear at hair and occlusion edges</td></tr>
+          <tr><td><code>rife</code> <span class="pill">best</span></td><td>AI optical flow (RIFE v4.6, GPU via Vulkan)</td><td>VFX work. Handles fine detail and occlusion best</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="cli">
+  <div class="wrap">
+    <h2>Command line</h2>
+    <p class="sub">The same engine runs from Python, for batch jobs and pipelines.</p>
+<pre><span class="c"># install dependencies</span>
+pip install opencv-python numpy pillow rife-ncnn-vulkan-python-tntwise
+
+<span class="c"># analyze a clip</span>
+python cli.py report --input clip.mp4
+
+<span class="c"># fix it with AI interpolation (ProRes 422 HQ output)</span>
+python cli.py fix --input clip.mp4 --output clip_fixed.mov --interp-mode rife</pre>
+    <p class="fine">Full parameter list and build instructions are in the <a href="https://github.com/farhadzamanivfx-ui/seedance-frame-doctor#readme">README</a>.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p><span class="author">Farhad Zamani</span> · VFX Supervisor &amp; Senior Compositor</p>
+    <p>Free to use for personal and commercial VFX and post-production work. Redistribution of the source or the built executable, with or without changes, must credit the original author. © 2026 Farhad Zamani.</p>
+    <p>Third-party components: <a href="https://ffmpeg.org">ffmpeg</a> (GPLv3, run as a separate process) ·
+      <a href="https://github.com/nihui/rife-ncnn-vulkan">RIFE model</a> (MIT) ·
+      <a href="https://github.com/TNTwise/rife-ncnn-vulkan-python">rife-ncnn-vulkan-python</a> (MIT)</p>
+  </div>
+</footer>
+
+</body>
+</html>

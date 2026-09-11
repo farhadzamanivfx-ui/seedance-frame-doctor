@@ -1,0 +1,12 @@
+# build outputs (the .exe is published on the Releases page, not in git)
+.venv/
+build/
+dist/
+build_log.txt
+*.spec
+__pycache__/
+*.pyc
+
+# ffmpeg is downloaded by setup_and_build.bat
+ffmpeg.exe
+ffprobe.exe
