@@ -2,7 +2,7 @@
 
 A free Windows tool that detects and fixes the **duplicate/held-frame stutter** baked into Seedance 2.0 generated clips.
 
-🌐 **Website:** https://farhadzamanivfx-ui.github.io/seedance-frame-doctor/  ·  ⬇ **[Download SeedanceFrameDoctor.exe](https://github.com/farhadzamanivfx-ui/seedance-frame-doctor/releases/latest/download/SeedanceFrameDoctor.exe)**
+🌐   ⬇ **[Download SeedanceFrameDoctor.exe](https://github.com/farhadzamanivfx-ui/seedance-frame-doctor/releases/latest/download/SeedanceFrameDoctor.exe)**
 
 ![Seedance Frame Doctor](docs/screenshot.png)
 
